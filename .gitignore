@@ -7,6 +7,7 @@ node_modules/
 # System Files
 .DS_Store
 Thumbs.db
+._*
 
 # Editor directories and files
 .vscode/
@@ -30,3 +31,14 @@ yarn-error.log*
 
 # Backup files
 *.backup
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
