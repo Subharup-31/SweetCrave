@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetCrave - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        h1 { margin-bottom: 2rem; }
+        button {
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        button:hover { background: #ff5589; }
+        .status { margin-top: 2rem; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍰 SweetCrave - System Test</h1>
+        <p>Click the button below to clear cache and restart:</p>
+        
+        <button onclick="clearAndRestart()">🔄 Clear Cache & Restart</button>
+        <button onclick="window.location.href='index.html'">📄 Go to Main Site</button>
+        
+        <div class="status" id="status">Ready to test...</div>
+    </div>
+
+    <script>
+        function clearAndRestart() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Clearing cache...';
+            
+            // Clear all storage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Clear service workers
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            
+            // Clear cache storage
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) caches.delete(name);
+                });
+            }
+            
+            status.innerHTML = '✅ Cache cleared! Redirecting in 2 seconds...';
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+        
+        // Test network
+        fetch('https://www.google.com', { mode: 'no-cors' })
+            .then(() => {
+                document.getElementById('status').innerHTML = '✅ Network: Connected';
+            })
+            .catch(() => {
+                document.getElementById('status').innerHTML = '❌ Network: Offline or Restricted';
+            });
+    </script>
+</body>
+</html>

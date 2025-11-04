@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Cache - SweetCrave</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        button { background: #ff6b9d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px; }
+        button:hover { background: #e55a8a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SweetCrave Cache Cleaner</h1>
+        <p>This tool will clear any cached cart data and reset your browser state.</p>
+
+        <button onclick="clearAll()">Clear All Cache</button>
+        <button onclick="clearCart()">Clear Cart Only</button>
+        <button onclick="checkStorage()">Check Current Storage</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function clearAll() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('output').innerHTML = '<p style="color: green;">✅ All cache cleared! Close this tab and refresh the main site.</p>';
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cart');
+            document.getElementById('output').innerHTML = '<p style="color: green;">✅ Cart cleared! Close this tab and refresh the main site.</p>';
+        }
+
+        function checkStorage() {
+            const cart = localStorage.getItem('cart');
+            const output = document.getElementById('output');
+            output.innerHTML = `
+                <h3>Current Storage:</h3>
+                <p><strong>Cart:</strong> ${cart ? JSON.parse(cart).length + ' items' : 'Empty'}</p>
+                <p><strong>Raw Cart Data:</strong> ${cart || 'null'}</p>
+            `;
+        }
+
+        // Check storage on load
+        checkStorage();
+    </script>
+</body>
+</html>

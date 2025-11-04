@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Products collection - read access for all, write access restricted
+    match /products/{document} {
+      allow read: if true; // Anyone can read products
+      allow write: if false; // Only allow writes through Firebase Admin SDK
+    }
+
+    // Cart data stored in localStorage (client-side only)
+    // No Firestore storage needed for cart functionality
+
+    // Users collection for future authentication features
+    match /users/{userId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Orders collection for future order management
+    match /orders/{orderId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
