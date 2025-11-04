@@ -1137,7 +1137,7 @@
     </section>
 
     <section class="contact" id="contact">
-        <h2 class="section-title">Get In Touch</h2>
+        <h2 class="section-title">Connect with Us</h2>
         <div class="contact-content">
             <form class="contact-form" id="contactForm">
                 <div class="form-group">
@@ -1651,7 +1651,7 @@
                 
                 // Create product cards
                 const productCards = sortedProducts.map(product => {
-                    const priceInDollars = (product.price / 100).toFixed(2);
+                    const priceInDollars = product.price;
                     
                     // Debug logging for each product
                     console.log('Rendering product:', {
@@ -1679,7 +1679,7 @@
                                 <h3>${product.name}</h3>
                                 <p>${product.description}</p>
                                 <div class="price-and-button">
-                                    <span class="price">$${priceInDollars}</span>
+                                    <span class="price">₹${priceInDollars}</span>
                                     <button class="add-to-cart-btn"
                                             data-name="${product.name}"
                                             data-description="${product.description}"
