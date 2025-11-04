@@ -614,22 +614,22 @@
                 
                 <div class="summary-row">
                     <span class="summary-label">Subtotal</span>
-                    <span class="summary-value" id="subtotal">$0.00</span>
+                    <span class="summary-value" id="subtotal">₹0.00</span>
                 </div>
                 
                 <div class="summary-row">
                     <span class="summary-label">Tax (10%)</span>
-                    <span class="summary-value" id="tax">$0.00</span>
+                    <span class="summary-value" id="tax">₹0.00</span>
                 </div>
                 
                 <div class="summary-row">
                     <span class="summary-label">Delivery</span>
-                    <span class="summary-value" id="delivery">$5.00</span>
+                    <span class="summary-value" id="delivery">₹5.00</span>
                 </div>
 
                 <div class="total-row">
                     <span class="total-label">Total</span>
-                    <span class="total-value" id="total">$0.00</span>
+                    <span class="total-value" id="total">₹0.00</span>
                 </div>
 
                 <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
@@ -765,7 +765,7 @@
                         <div class="item-details">
                             <div class="item-name">${item.name}</div>
                             <div class="item-description">${item.description}</div>
-                            <div class="item-price">$${(item.price / 100).toFixed(2)} each</div>
+                            <div class="item-price">₹${item.price}</div>
                         </div>
                         <div class="item-actions">
                             <div class="quantity-control">
@@ -823,15 +823,15 @@
 
         // Update summary
         function updateSummary() {
-            const subtotal = cartItems.reduce((sum, item) => sum + ((item.price / 100) * item.quantity), 0);
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const tax = subtotal * 0.1;
             const delivery = cartItems.length > 0 ? 5.00 : 0;
             const total = subtotal + tax + delivery;
 
-            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
-            document.getElementById('delivery').textContent = cartItems.length > 0 ? `$${delivery.toFixed(2)}` : 'FREE';
-            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('subtotal').textContent = `₹${subtotal}`;
+            document.getElementById('tax').textContent = `₹${Math.round(tax)}`;
+            document.getElementById('delivery').textContent = cartItems.length > 0 ? `₹${delivery}` : 'FREE';
+            document.getElementById('total').textContent = `₹${Math.round(total)}`;
         }
 
         // Checkout
