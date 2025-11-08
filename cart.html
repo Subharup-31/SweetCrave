@@ -840,14 +840,8 @@
                 showSuccessMessage('Your cart is empty!');
                 return;
             }
-            showSuccessMessage('Proceeding to checkout...');
-            setTimeout(() => {
-                alert('Thank you for your order! This is a demo - no actual payment will be processed.');
-                // Clear cart after successful checkout
-                cartItems = [];
-                saveCart();
-                renderCart();
-            }, 1000);
+            // Redirect to checkout page
+            window.location.href = 'checkout.html';
         }
 
         // Continue shopping

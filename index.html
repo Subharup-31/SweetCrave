@@ -458,27 +458,11 @@
             position: relative;
             border: 1px solid rgba(255, 107, 157, 0.2);
             backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
         }
 
-        .featured-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #ff6b9d 0%, #ffc371 100%);
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 10;
-            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
-            animation: pulse 2s ease-in-out infinite;
-        }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
 
         .pastry-card::before {
             content: '';
@@ -566,6 +550,11 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 0.5rem;
+            height: 3em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .pastry-info p {
@@ -573,6 +562,11 @@
             font-size: 0.95rem;
             line-height: 1.6;
             margin-bottom: 1rem;
+            height: 4.5em;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .price-and-button {
@@ -1077,6 +1071,7 @@
             <li><a href="#featured">Menu</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="login.html" id="authLink">Login</a></li>
         </ul>
         <a href="cart.html" class="cart-btn" style="position: relative; top: -2px;">
             <span class="cart-icon">🛒</span>
@@ -1468,13 +1463,8 @@
                         productsData = newProductsList;
                         renderProducts(newProductsList);
                     } else {
-                        // Sort products - featured first
-                        const sortedProducts = [...productsList].sort((a, b) => 
-                            (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
-                        );
-                        
-                        productsData = sortedProducts;
-                        renderProducts(sortedProducts);
+                        productsData = productsList;
+                        renderProducts(productsList);
                     }
 
                     // Set up real-time listeners
@@ -1644,13 +1634,8 @@
 
             // Render products if any exist
             if (products && products.length > 0) {
-                // Sort products with featured first
-                const sortedProducts = [...products].sort((a, b) => 
-                    (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
-                );
-                
                 // Create product cards
-                const productCards = sortedProducts.map(product => {
+                const productCards = products.map(product => {
                     const priceInDollars = product.price;
                     
                     // Debug logging for each product
@@ -1666,8 +1651,7 @@
                     const hasValidImage = product.image && product.image.trim() !== '';
                     
                     return `
-                        <div class="pastry-card ${product.featured ? 'featured' : ''}" data-product-id="${product.id}">
-                            ${product.featured ? '<div class="featured-badge">Featured</div>' : ''}
+                        <div class="pastry-card" data-product-id="${product.id}">
                             <div class="pastry-image">
                                 ${hasValidImage ? 
                                     `<img src="${product.image}" alt="${product.name}" loading="lazy" crossorigin="anonymous"
@@ -1880,7 +1864,8 @@
         import { 
             getAuth, 
             onAuthStateChanged, 
-            signInAnonymously 
+            signInAnonymously,
+            signOut
         } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
 
         // Initialize Firebase services
@@ -2056,8 +2041,51 @@
                 });
                 
             // Set up auth state change listener
-            onAuthStateChanged(auth, (user) => {
+            onAuthStateChanged(auth, async (user) => {
                 console.log("Auth state changed:", user ? `User ID: ${user.uid}` : 'No user');
+                
+                const authLink = document.getElementById('authLink');
+                if (user) {
+                    // User is logged in
+                    authLink.textContent = 'Logout';
+                    authLink.href = '#';
+                    authLink.onclick = async (e) => {
+                        e.preventDefault();
+                        try {
+                            await signOut(auth);
+                            window.location.reload();
+                        } catch (error) {
+                            console.error('Logout error:', error);
+                        }
+                    };
+                    
+                    // Check if user is admin and show admin link
+                    try {
+                        const userDoc = await getDoc(doc(db, 'users', user.uid));
+                        if (userDoc.exists() && userDoc.data().role === 'admin') {
+                            // Add admin link if not exists
+                            const navLinks = document.querySelector('.nav-links');
+                            if (!document.getElementById('adminLink')) {
+                                const adminLi = document.createElement('li');
+                                adminLi.innerHTML = '<a href="admin.html" id="adminLink">Admin</a>';
+                                navLinks.insertBefore(adminLi, authLink.parentElement);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error checking admin status:', error);
+                    }
+                } else {
+                    // User is logged out
+                    authLink.textContent = 'Login';
+                    authLink.href = 'login.html';
+                    authLink.onclick = null;
+                    
+                    // Remove admin link if exists
+                    const adminLink = document.getElementById('adminLink');
+                    if (adminLink) {
+                        adminLink.parentElement.remove();
+                    }
+                }
             });
         });
     </script>
